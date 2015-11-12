@@ -1,25 +1,27 @@
-var tiles;
-var whiteSpaceX;
-var whiteSpaceY;
+"use strict";
+
+var tile;
 var blink;
 var timer;
-var px = 'px'
+var whiteSpaceX = '300px';
+var whiteSpaceY = '300px';
+var px = 'px';
 
 window.onload = function ()
 {
 	var puzzlearea = document.getElementById('puzzlearea'); 
-	tiles = puzzlearea.getElementsByTagName('div');
+	tile = puzzlearea.getElementsByTagName('div');
 	
-	for (var i=0; i<tiles.length; i++)
+	for (var i=0; i<tile.length; i++)
 	{
-		tiles[i].className = 'puzzlepiece';
-		tiles[i].style.left = (i%4*100)+'px';
-		tiles[i].style.top = (parseInt(i/4)*100) + 'px';
+		tile[i].className = 'puzzlepiece';
+		tile[i].style.left = (i%4*100)+'px';
+		tile[i].style.top = (parseInt(i/4)*100) + 'px';
 				
-		tiles[i].style.backgroundPosition= '-' + tiles[i].style.left + ' ' + '-' + tiles[i].style.top;
+		tile[i].style.backgroundPosition= '-' + tile[i].style.left + ' ' + '-' + tile[i].style.top;
 		
 		
-		tiles[i].onclick= function()
+		tile[i].onclick= function()
 		{
 			if (canMove(parseInt(this.innerHTML)))
 			{
@@ -31,14 +33,12 @@ window.onload = function ()
 				return;
 			} 
 		};	
-		
-		tiles[i].onmouseout = function()
+		tile[i].onmouseout = function()
 		{
 			this.style.border = "2px solid black";
 		    this.style.color = "#99FFFF";
 	    };
-		
-		tiles[i].onmouseover  = function()
+		tile[i].onmouseover  = function()
 		{
 			if(canMove(parseInt(this.innerHTML)))
 			{
@@ -46,105 +46,93 @@ window.onload = function ()
 				this.style.color = "#FF00CC";
 		    }
 		};	
-		
 	}
-	whiteSpaceX = '300px';
-	whiteSpaceY = '300px';
-
 	
-	var shufflebutton = document.getElementById('shufflebutton');
-	shufflebutton.onclick = function()
+function canMove(pos)
+{
+	if (callLeft(whiteSpaceX, whiteSpaceY) == (pos-1))
+	{
+		return true;
+	}
+
+	if (callDown(whiteSpaceX, whiteSpaceY) == (pos-1))
+	{
+		return true;
+	}
+
+	if (callUp(whiteSpaceX, whiteSpaceY) == (pos-1))
+	{
+		return true;
+	}
+
+	if (callRight(whiteSpaceX, whiteSpaceY) == (pos-1))
+	{
+		return true;
+	}
+}
+
+function swap (pos) {
+	var temp = tile[pos].style.top;
+	tile[pos].style.top = whiteSpaceY;
+	whiteSpaceY = temp;
+
+	temp = tile[pos].style.left;
+	tile[pos].style.left = whiteSpaceX;
+	whiteSpaceX = temp;
+}
+	var shuffleButton = document.getElementById('shufflebutton');
+	shuffleButton.onclick = function()
 	{
 		for(var i=0; i<250; i++)
 	    {
 			var rand = parseInt(Math.random()* 100) %4;
 			if (rand == 0)
 			{
-				var tmp = calUp(whiteSpaceX, whiteSpaceY);
-				if ( tmp != -1)
+				var temp = callUp(whiteSpaceX, whiteSpaceY);
+				if ( temp != -1)
 				{
-					swap(tmp);
+					swap(temp);
 				}
 				}
 			if (rand == 1)
 			{
-				var tmp = calDown(whiteSpaceX, whiteSpaceY);
-				if ( tmp != -1) 
+				var temp = callDown(whiteSpaceX, whiteSpaceY);
+				if ( temp != -1) 
 				{
-					swap(tmp);
+					swap(temp);
 				}
 			}
 
 			if (rand == 2)
 			{
-				var tmp = calLeft(whiteSpaceX, whiteSpaceY);
-				if ( tmp != -1)
+				var temp = callLeft(whiteSpaceX, whiteSpaceY);
+				if ( temp != -1)
 				{
-					swap(tmp);
+					swap(temp);
 				}
 			}
-
 			if (rand == 3)
 			{
-				var tmp = calRight(whiteSpaceX, whiteSpaceY);
-				if (tmp != -1)
+				var temp = callRight(whiteSpaceX, whiteSpaceY);
+				if (temp != -1)
 				{
-				 swap(tmp);
+				 swap(temp);
 				}
 			}
 		}
 	};
 };
 
-function canMove(pos)
-{
-	if (calLeft(whiteSpaceX, whiteSpaceY) == (pos-1))
-	{
-		return true;
-	}
-
-	if (calDown(whiteSpaceX, whiteSpaceY) == (pos-1))
-	{
-		return true;
-	}
-
-	if (calUp(whiteSpaceX, whiteSpaceY) == (pos-1))
-	{
-		return true;
-	}
-
-	if (calRight(whiteSpaceX, whiteSpaceY) == (pos-1))
-	{
-		return true;
-	}
-}
-
-
-function swap (pos) {
-	var temp = tiles[pos].style.top;
-	tiles[pos].style.top = whiteSpaceY;
-	whiteSpaceY = temp;
-
-	temp = tiles[pos].style.left;
-	tiles[pos].style.left = whiteSpaceX;
-	whiteSpaceX = temp;
-}
-
-
-
-
-
-
-function calLeft(x, y)
+function callLeft(x, y)
 {
 	var horizontal = parseInt(x);
 	var vertical = parseInt(y);
 
 	if (horizontal > 0)
 	{
-		for (var i = 0; i < tiles.length; i++) 
+		for (var i = 0; i < tile.length; i++) 
 		{
-			if (parseInt(tiles[i].style.left) + 100 == horizontal && parseInt(tiles[i].style.top) == vertical)
+			if (parseInt(tile[i].style.left) + 100 == horizontal && parseInt(tile[i].style.top) == vertical)
 			{
 				return i;
 			} 
@@ -156,15 +144,15 @@ function calLeft(x, y)
 	}
 }
 
-function calRight (x, y) 
+function callRight (x, y) 
 {
 	var horizontal = parseInt(x);
 	var vertical = parseInt(y);
 	if (horizontal < 300)
 	{
-		for (var i =0; i<tiles.length; i++)
+		for (var i =0; i<tile.length; i++)
 		{
-			if (parseInt(tiles[i].style.left) - 100 == horizontal && parseInt(tiles[i].style.top) == vertical) 
+			if (parseInt(tile[i].style.left) - 100 == horizontal && parseInt(tile[i].style.top) == vertical) 
 			{
 				return i;
 			}
@@ -175,15 +163,15 @@ function calRight (x, y)
 	} 
 }
 
-function calUp (x, y) 
+function callUp (x, y) 
 {
 	var horizontal = parseInt(x);
 	var vertical = parseInt(y);
 	if (vertical > 0)
 	{
-		for (var i=0; i<tiles.length; i++)
+		for (var i=0; i<tile.length; i++)
 		{
-			if (parseInt(tiles[i].style.top) + 100 == vertical && parseInt(tiles[i].style.left) == horizontal) 
+			if (parseInt(tile[i].style.top) + 100 == vertical && parseInt(tile[i].style.left) == horizontal) 
 			{
 				return i;
 			}
@@ -194,15 +182,15 @@ function calUp (x, y)
 	}
 }
 
-function calDown (x, y)
+function callDown (x, y)
 {
 	var horizontal = parseInt(x);
 	var vertical = parseInt(y);
 	if (vertical < 300)
 	{
-		for (var i=0; i<tiles.length; i++)
+		for (var i=0; i<tile.length; i++)
 		{
-			if (parseInt(tiles[i].style.top) - 100 == vertical && parseInt(tiles[i].style.left) == horizontal) 
+			if (parseInt(tile[i].style.top) - 100 == vertical && parseInt(tile[i].style.left) == horizontal) 
 			{
 				return i;
 			}
@@ -214,6 +202,14 @@ function calDown (x, y)
 	} 
 }
 
+function youWin()
+{
+	 var body = document.getElementsByTagName('body');
+	 body[0].style.backgroundColor = "#0000CC";
+	 blink = 10;
+	 timer = setTimeout(Blink, 100);
+}
+
 function Blink()
 {
 	blink --;
@@ -221,7 +217,7 @@ function Blink()
 	{
 		var body = document.getElementsByTagName('body');
 		body[0].style.backgroundColor = "#FFFFFF";
-		alert('you win');
+		alert('You have won the game!!!');
 		return;
 	}
 	if (blink % 2)
@@ -232,28 +228,18 @@ function Blink()
 	else
 	{
 		var body = document.getElementsByTagName('body');
-		body[0].style.backgroundColor = "#33FF33";
+		body[0].style.backgroundColor = "#33FF36";
 	}
 	timer = setTimeout(Blink, 100);
 }
 
-
-function youWin()
-{
-	 var body = document.getElementsByTagName('body');
-	 body[0].style.backgroundColor = "#0000CC";
-	 blink = 10;
-	 timer = setTimeout(Blink, 100);
-}
-
-
 function checkFinish()
 {
 	var flag = true;
-	for (var i = 0; i < tiles.length; i++) 
+	for (var i = 0; i < tile.length; i++) 
 	{
-		var y = parseInt(tiles[i].style.top);
-		var x = parseInt(tiles[i].style.left);
+		var y = parseInt(tile[i].style.top);
+		var x = parseInt(tile[i].style.left);
 
 		if (x != (i%4*100) || y != parseInt(i/4)*100)
 		{
